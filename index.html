@@ -6,21 +6,19 @@
     <title>Invigilation Roles: Timeline Challenge</title>
     <style>
         :root {
-            /* Your Specific Branding Colors */
             --brand-blue: #001489;
             --brand-green: #C4D600;
             --brand-bright-blue: #007DBA;
-            --error-red: #d32f2f;
-            --bg-light: #f9f9f9;
             --white: #ffffff;
         }
 
         body {
-            font-family: 'Inter', -apple-system, sans-serif;
-            background-color: #f0f2f5;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7f9;
             padding: 20px;
             display: flex;
             justify-content: center;
+            color: var(--brand-blue);
         }
 
         .main-card {
@@ -28,9 +26,9 @@
             max-width: 900px;
             background: var(--white);
             border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 30px rgba(0,20,137,0.1);
             overflow: hidden;
-            border-top: 6px solid var(--brand-green);
+            border: 1px solid #ddd;
         }
 
         .header {
@@ -38,16 +36,15 @@
             color: var(--white);
             padding: 25px;
             text-align: center;
+            border-bottom: 5px solid var(--brand-green);
         }
 
         /* Progress Steps */
         .step-indicator {
             display: flex;
             justify-content: space-around;
-            background: #f1f1f1;
-            padding: 0;
-            font-size: 0.75rem;
-            font-weight: bold;
+            background: #f8f9fa;
+            border-bottom: 1px solid #eee;
         }
 
         .step { 
@@ -55,16 +52,16 @@
             text-align: center; 
             padding: 15px 5px; 
             border-bottom: 4px solid #ccc;
-            color: #777;
-            transition: all 0.3s;
+            color: #999;
+            font-size: 0.75rem;
+            font-weight: bold;
         }
-        .step.active { color: var(--brand-blue); border-bottom-color: var(--brand-bright-blue); background: #fff; }
+        .step.active { color: var(--brand-blue); border-bottom-color: var(--brand-bright-blue); background: var(--white); }
         .step.done { color: var(--brand-blue); border-bottom-color: var(--brand-green); }
 
-        /* Game Layout */
-        .game-body { padding: 30px; min-height: 460px; }
+        .game-body { padding: 30px; min-height: 480px; }
         
-        .stage-title { color: var(--brand-blue); margin-top: 0; font-size: 1.5rem; }
+        .stage-title { color: var(--brand-blue); margin-top: 0; font-size: 1.5rem; border-left: 5px solid var(--brand-green); padding-left: 15px; }
 
         .drop-zones {
             display: grid;
@@ -75,93 +72,96 @@
 
         .zone {
             min-height: 220px;
-            border: 2px dashed #cbd5e0;
             border-radius: 10px;
             padding: 12px;
             display: flex;
             flex-direction: column;
             gap: 10px;
-            background: #fdfdfd;
-            transition: border-color 0.2s;
+            background: var(--brand-bright-blue); /* Bright blue for the zones */
+            transition: transform 0.2s;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);
         }
 
         .zone-header {
             text-align: center;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             font-weight: 800;
             text-transform: uppercase;
-            padding: 10px;
-            margin-bottom: 8px;
-            background: var(--brand-bright-blue);
-            color: white;
-            border-radius: 6px;
+            padding: 8px;
+            color: var(--white); /* White text on bright blue */
+            border-bottom: 1px solid rgba(255,255,255,0.3);
+            margin-bottom: 10px;
         }
 
         /* Chips */
         .chip-bank {
-            background: #f8f9fa;
-            border: 1px solid #dee2e6;
+            background: #f1f3f5;
+            border: 2px dashed var(--brand-blue);
             padding: 25px;
             border-radius: 10px;
             margin-bottom: 20px;
             display: flex;
             flex-wrap: wrap;
             gap: 12px;
-            min-height: 90px;
+            min-height: 100px;
             justify-content: center;
             align-items: center;
         }
 
         .duty-chip {
             background: var(--white);
-            border: 1px solid #ced4da;
+            border: 2px solid var(--brand-blue);
             padding: 14px 18px;
             border-radius: 8px;
-            font-size: 0.92rem;
+            font-size: 0.9rem;
             cursor: grab;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.06);
-            max-width: 280px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            max-width: 260px;
             line-height: 1.4;
-            color: #333;
+            color: var(--brand-blue); /* Royal Blue text */
+            font-weight: 500;
         }
 
         .duty-chip.correct { 
-            border: 2px solid var(--brand-green); 
-            background: #f9fff0; 
+            background: var(--brand-green); 
+            border-color: var(--brand-green);
+            color: var(--brand-blue);
             cursor: default; 
             box-shadow: none;
-            color: #444;
         }
 
         .footer {
             padding: 25px 35px;
             text-align: right;
             border-top: 1px solid #eee;
-            background: #fcfcfc;
+            background: #fafafa;
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            align-items: center;
         }
 
-        .btn-next {
-            background: var(--brand-blue);
+        .btn {
             color: var(--white);
             border: none;
-            padding: 14px 35px;
+            padding: 14px 30px;
             border-radius: 6px;
             cursor: pointer;
             font-weight: bold;
-            display: none;
             transition: opacity 0.2s;
+            text-transform: uppercase;
+            font-size: 0.85rem;
         }
 
-        .btn-next:hover { opacity: 0.9; }
+        .btn-next { background: var(--brand-blue); }
+        .btn-reset { background: var(--brand-green); color: var(--brand-blue); }
+        .btn:hover { opacity: 0.9; }
 
         #final-msg {
             color: var(--brand-blue);
             font-weight: bold;
-            font-size: 1.2rem;
-            border: 2px solid var(--brand-green);
-            padding: 10px;
-            display: inline-block;
-            border-radius: 8px;
+            font-size: 1.1rem;
+            margin-right: auto;
         }
     </style>
 </head>
@@ -170,7 +170,6 @@
 <div class="main-card">
     <div class="header">
         <h2 style="margin:0">Examination Invigilation Protocol</h2>
-        <p style="margin:5px 0 0; opacity:0.9; font-size: 0.9rem;">Timeline-Based Role Assignment</p>
     </div>
 
     <div class="step-indicator">
@@ -181,11 +180,13 @@
     </div>
 
     <div class="game-body">
-        <h3 id="stage-name" class="stage-title">Stage 1: Preparation</h3>
-        <p style="font-size: 1rem; color: #555;">Drag each duty to the correct column to proceed:</p>
+        <h3 id="stage-name" class="stage-title">Phase 1</h3>
+        <p style="font-size: 0.95rem; color: var(--brand-blue); margin-bottom: 20px;">
+            <strong>Instructions:</strong> Drag duties to the correct zones. Incorrect matches will return to the bank.
+        </p>
         
         <div id="bank" class="chip-bank" ondrop="drop(event)" ondragover="allowDrop(event)">
-            <!-- Interactive chips injected via Script -->
+            <!-- Chips injected here -->
         </div>
 
         <div class="drop-zones">
@@ -202,8 +203,9 @@
     </div>
 
     <div class="footer">
-        <button id="nextBtn" class="btn-next" onclick="nextStage()">Complete Phase →</button>
-        <div id="final-msg" style="display:none;">🎉 Activity Complete! All invigilation duties have been correctly mapped.</div>
+        <div id="final-msg" style="display:none;">Timeline Complete!</div>
+        <button id="resetBtn" class="btn btn-reset" style="display:none;" onclick="resetActivity()">Start Over</button>
+        <button id="nextBtn" class="btn btn-next" style="display:none;" onclick="nextStage()">Next Phase →</button>
     </div>
 </div>
 
@@ -251,23 +253,29 @@
     function loadStage() {
         const bank = document.getElementById('bank');
         const nextBtn = document.getElementById('nextBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const finalMsg = document.getElementById('final-msg');
         const stageNameDisplay = document.getElementById('stage-name');
         
         bank.innerHTML = '';
         nextBtn.style.display = 'none';
+        
+        if (currentStageIndex === 0) {
+            resetBtn.style.display = 'none';
+            finalMsg.style.display = 'none';
+        }
+
         stageNameDisplay.innerText = stages[currentStageIndex].name;
 
-        // Reset the three zones
-        const zones = ['chief', 'invigilator', 'both'];
-        zones.forEach(zId => {
+        // Clear zones but keep headers
+        ['chief', 'invigilator', 'both'].forEach(zId => {
             const zElem = document.getElementById(zId);
             const header = zElem.querySelector('.zone-header');
             zElem.innerHTML = '';
             zElem.appendChild(header);
-            zElem.style.borderColor = '#cbd5e0';
         });
 
-        // Add current stage chips
+        // Populate bank
         stages[currentStageIndex].items.forEach(item => {
             const chip = document.createElement('div');
             chip.className = 'duty-chip';
@@ -279,7 +287,7 @@
             bank.appendChild(chip);
         });
 
-        // Progress navigation
+        // Update steps
         document.querySelectorAll('.step').forEach((step, idx) => {
             if (idx < currentStageIndex) step.className = 'step done';
             else if (idx === currentStageIndex) step.className = 'step active';
@@ -299,14 +307,16 @@
             targetZone = targetZone.closest('.zone');
         }
 
+        // Logic for snap back vs stay
         if (targetZone && targetZone.id === chipElem.dataset.role) {
             targetZone.appendChild(chipElem);
             chipElem.classList.add('correct');
             chipElem.draggable = false;
             checkStageComplete();
-        } else if (targetZone && targetZone.id !== 'bank') {
-            targetZone.style.borderColor = 'var(--error-red)';
-            setTimeout(() => { targetZone.style.borderColor = '#cbd5e0'; }, 600);
+        } else {
+            // Snap back logic: if wrong, it stays in the bank (or moves back to it)
+            const bank = document.getElementById('bank');
+            bank.appendChild(chipElem);
         }
     }
 
@@ -317,6 +327,7 @@
                 document.getElementById('nextBtn').style.display = 'inline-block';
             } else {
                 document.getElementById('final-msg').style.display = 'block';
+                document.getElementById('resetBtn').style.display = 'inline-block';
                 document.getElementById('s3').className = 'step done';
             }
         }
@@ -324,6 +335,11 @@
 
     function nextStage() {
         currentStageIndex++;
+        loadStage();
+    }
+
+    function resetActivity() {
+        currentStageIndex = 0;
         loadStage();
     }
 
