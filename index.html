@@ -3,19 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Exam Timeline</title>
+    <title>Invigilation Roles: Timeline Challenge</title>
     <style>
         :root {
-            --primary: #1a1f5e;
-            --secondary: #185fa5;
-            --chief-bg: #e0dcfc;
-            --invig-bg: #dff9f3;
-            --both-bg: #fff4e0;
-            --accent: #f39c12;
+            /* Your Specific Branding Colors */
+            --brand-blue: #001489;
+            --brand-green: #C4D600;
+            --brand-bright-blue: #007DBA;
+            --error-red: #d32f2f;
+            --bg-light: #f9f9f9;
+            --white: #ffffff;
         }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Inter', -apple-system, sans-serif;
             background-color: #f0f2f5;
             padding: 20px;
             display: flex;
@@ -25,16 +26,17 @@
         .main-card {
             width: 100%;
             max-width: 900px;
-            background: white;
+            background: var(--white);
             border-radius: 12px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
             overflow: hidden;
+            border-top: 6px solid var(--brand-green);
         }
 
         .header {
-            background: var(--primary);
-            color: white;
-            padding: 20px;
+            background: var(--brand-blue);
+            color: var(--white);
+            padding: 25px;
             text-align: center;
         }
 
@@ -42,94 +44,124 @@
         .step-indicator {
             display: flex;
             justify-content: space-around;
-            background: #eee;
-            padding: 10px;
-            font-size: 0.8rem;
+            background: #f1f1f1;
+            padding: 0;
+            font-size: 0.75rem;
             font-weight: bold;
-            color: #888;
         }
 
-        .step { flex: 1; text-align: center; padding: 5px; border-bottom: 4px solid #ccc; }
-        .step.active { color: var(--secondary); border-bottom-color: var(--secondary); }
-        .step.done { color: #2ecc71; border-bottom-color: #2ecc71; }
+        .step { 
+            flex: 1; 
+            text-align: center; 
+            padding: 15px 5px; 
+            border-bottom: 4px solid #ccc;
+            color: #777;
+            transition: all 0.3s;
+        }
+        .step.active { color: var(--brand-blue); border-bottom-color: var(--brand-bright-blue); background: #fff; }
+        .step.done { color: var(--brand-blue); border-bottom-color: var(--brand-green); }
 
         /* Game Layout */
-        .game-body { padding: 25px; min-height: 450px; }
+        .game-body { padding: 30px; min-height: 460px; }
         
-        .stage-title { color: var(--primary); margin-top: 0; }
+        .stage-title { color: var(--brand-blue); margin-top: 0; font-size: 1.5rem; }
 
         .drop-zones {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 15px;
-            margin-top: 20px;
+            margin-top: 25px;
         }
 
         .zone {
-            min-height: 180px;
-            border: 2px dashed #bbb;
-            border-radius: 8px;
-            padding: 10px;
+            min-height: 220px;
+            border: 2px dashed #cbd5e0;
+            border-radius: 10px;
+            padding: 12px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
-            transition: 0.3s;
+            gap: 10px;
+            background: #fdfdfd;
+            transition: border-color 0.2s;
         }
 
         .zone-header {
             text-align: center;
-            font-size: 0.75rem;
-            font-weight: bold;
+            font-size: 0.8rem;
+            font-weight: 800;
             text-transform: uppercase;
-            margin-bottom: 10px;
-            color: #555;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: var(--brand-bright-blue);
+            color: white;
+            border-radius: 6px;
         }
-
-        .chief-zone { background: var(--chief-bg); }
-        .invig-zone { background: var(--invig-bg); }
-        .both-zone { background: var(--both-bg); }
 
         /* Chips */
         .chip-bank {
             background: #f8f9fa;
-            border: 1px solid #ddd;
-            padding: 15px;
-            border-radius: 8px;
+            border: 1px solid #dee2e6;
+            padding: 25px;
+            border-radius: 10px;
             margin-bottom: 20px;
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
-            min-height: 60px;
+            gap: 12px;
+            min-height: 90px;
+            justify-content: center;
+            align-items: center;
         }
 
         .duty-chip {
-            background: white;
-            border: 1px solid #ccc;
-            padding: 10px 14px;
-            border-radius: 6px;
-            font-size: 0.85rem;
+            background: var(--white);
+            border: 1px solid #ced4da;
+            padding: 14px 18px;
+            border-radius: 8px;
+            font-size: 0.92rem;
             cursor: grab;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            max-width: 250px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.06);
+            max-width: 280px;
+            line-height: 1.4;
+            color: #333;
         }
 
-        .duty-chip.correct { border: 2px solid #27ae60; background: #ebfaef; cursor: default; }
+        .duty-chip.correct { 
+            border: 2px solid var(--brand-green); 
+            background: #f9fff0; 
+            cursor: default; 
+            box-shadow: none;
+            color: #444;
+        }
 
         .footer {
-            padding: 20px;
+            padding: 25px 35px;
             text-align: right;
             border-top: 1px solid #eee;
+            background: #fcfcfc;
         }
 
         .btn-next {
-            background: var(--secondary);
-            color: white;
+            background: var(--brand-blue);
+            color: var(--white);
             border: none;
-            padding: 10px 25px;
-            border-radius: 5px;
+            padding: 14px 35px;
+            border-radius: 6px;
             cursor: pointer;
             font-weight: bold;
             display: none;
+            transition: opacity 0.2s;
+        }
+
+        .btn-next:hover { opacity: 0.9; }
+
+        #final-msg {
+            color: var(--brand-blue);
+            font-weight: bold;
+            font-size: 1.2rem;
+            border: 2px solid var(--brand-green);
+            padding: 10px;
+            display: inline-block;
+            border-radius: 8px;
         }
     </style>
 </head>
@@ -137,102 +169,106 @@
 
 <div class="main-card">
     <div class="header">
-        <h3 style="margin:0">Invigilation Roles: Timeline Challenge</h3>
+        <h2 style="margin:0">Examination Invigilation Protocol</h2>
+        <p style="margin:5px 0 0; opacity:0.9; font-size: 0.9rem;">Timeline-Based Role Assignment</p>
     </div>
 
     <div class="step-indicator">
-        <div class="step active" id="s0">1. PREP</div>
-        <div class="step" id="s1">2. START</div>
-        <div class="step" id="s2">3. DURING</div>
-        <div class="step" id="s3">4. END</div>
+        <div class="step active" id="s0">PREPARATION</div>
+        <div class="step" id="s1">EXAM START</div>
+        <div class="step" id="s2">DURING WRITING</div>
+        <div class="step" id="s3">CONCLUSION</div>
     </div>
 
     <div class="game-body">
-        <h4 id="stage-name" class="stage-title">Stage 1: Preparation</h4>
-        <p style="font-size: 0.9rem; color: #666;">Drag the duties from the bank into the correct role's zone.</p>
+        <h3 id="stage-name" class="stage-title">Stage 1: Preparation</h3>
+        <p style="font-size: 1rem; color: #555;">Drag each duty to the correct column to proceed:</p>
         
         <div id="bank" class="chip-bank" ondrop="drop(event)" ondragover="allowDrop(event)">
-            <!-- Chips injected here -->
+            <!-- Interactive chips injected via Script -->
         </div>
 
         <div class="drop-zones">
-            <div class="zone chief-zone" id="chief" ondrop="drop(event)" ondragover="allowDrop(event)">
+            <div class="zone" id="chief" ondrop="drop(event)" ondragover="allowDrop(event)">
                 <div class="zone-header">Chief Invigilator</div>
             </div>
-            <div class="zone invig-zone" id="invigilator" ondrop="drop(event)" ondragover="allowDrop(event)">
+            <div class="zone" id="invigilator" ondrop="drop(event)" ondragover="allowDrop(event)">
                 <div class="zone-header">Invigilator</div>
             </div>
-            <div class="zone both-zone" id="both" ondrop="drop(event)" ondragover="allowDrop(event)">
+            <div class="zone" id="both" ondrop="drop(event)" ondragover="allowDrop(event)">
                 <div class="zone-header">Both Roles</div>
             </div>
         </div>
     </div>
 
     <div class="footer">
-        <button id="nextBtn" class="btn-next" onclick="nextStage()">Next Phase →</button>
-        <div id="final-msg" style="display:none; color: #27ae60; font-weight: bold;">Activity Complete! You've mastered the Exam Day timeline.</div>
+        <button id="nextBtn" class="btn-next" onclick="nextStage()">Complete Phase →</button>
+        <div id="final-msg" style="display:none;">🎉 Activity Complete! All invigilation duties have been correctly mapped.</div>
     </div>
 </div>
 
 <script>
     const stages = [
         {
-            name: "Stage 1: Preparation (Pre-Exam)",
+            name: "Phase 1: Venue Preparation",
             items: [
-                { id: "i1", text: "Ensure venue is prepared 2 days before.", role: "chief" },
-                { id: "i2", text: "Ensure seating plan is displayed clearly.", role: "chief" },
-                { id: "i3", text: "Confirm 1:30 invigilator ratio.", role: "chief" }
+                { id: "d1", text: "Ensure the examination venue is prepared at least two days before the examination.", role: "chief" },
+                { id: "d2", text: "Ensure the seating plan is displayed inside and outside the examination room.", role: "chief" },
+                { id: "d3", text: "Confirm the correct candidate-to-invigilator ratio of 1:30 is maintained.", role: "chief" }
             ]
         },
         {
-            name: "Stage 2: Exam Start (The Briefing)",
+            name: "Phase 2: Exam Commencement",
             items: [
-                { id: "i4", text: "Retrieve session bags (GLAM key).", role: "chief" },
-                { id: "i5", text: "Check IDs and Admission Letters.", role: "invigilator" },
-                { id: "i6", text: "Open paper bags in front of learners.", role: "chief" },
-                { id: "i7", text: "Wear a name tag at all times.", role: "both" }
+                { id: "d4", text: "Retrieve the sealed session bag in accordance with the required GLAM key procedure.", role: "chief" },
+                { id: "d5", text: "Check each candidate's proof of identity (ID or passport) and official Admission Letter.", role: "invigilator" },
+                { id: "d6", text: "Open sealed question paper bags in front of the candidates and the principal.", role: "chief" },
+                { id: "d7", text: "Wear a name tag at all times.", role: "both" }
             ]
         },
         {
-            name: "Stage 3: During Writing",
+            name: "Phase 3: Supervision & Conduct",
             items: [
-                { id: "i8", text: "Move continuously to supervise.", role: "invigilator" },
-                { id: "i9", text: "Escort learners to the bathroom.", role: "invigilator" },
-                { id: "i10", text: "Mark Script Control Register.", role: "invigilator" },
-                { id: "i11", text: "Confiscate unauthorised devices.", role: "invigilator" }
+                { id: "d8", text: "Move continuously around the venue to supervise learners while they write.", role: "invigilator" },
+                { id: "d9", text: "Escort candidates to the bathroom when necessary.", role: "invigilator" },
+                { id: "d10", text: "Mark learners as Present or Absent on the Script Control Register.", role: "invigilator" },
+                { id: "d11", text: "Confiscate unauthorised devices or materials and mark the answer script as IRREGULARITY.", role: "invigilator" }
             ]
         },
         {
-            name: "Stage 4: Conclusion & Security",
+            name: "Phase 4: Script Security & Close-out",
             items: [
-                { id: "i12", text: "Submit Irregularity (Annexure A).", role: "chief" },
-                { id: "i13", text: "Count all answer books.", role: "invigilator" },
-                { id: "i14", text: "Batch and package scripts.", role: "both" },
-                { id: "i15", text: "Clear venue of all answer books.", role: "invigilator" }
+                { id: "d12", text: "Submit the irregularity report form (Annexure A) to the WCED Irregularity Unit.", role: "chief" },
+                { id: "d13", text: "Count all answer books before and after use.", role: "invigilator" },
+                { id: "d14", text: "Batch and package answer scripts after each session.", role: "both" },
+                { id: "d15", text: "Ensure no answer books remain in the venue after the session.", role: "invigilator" }
             ]
         }
     ];
 
-    let currentStage = 0;
+    let currentStageIndex = 0;
 
-    function initStage() {
+    function loadStage() {
         const bank = document.getElementById('bank');
         const nextBtn = document.getElementById('nextBtn');
-        const stageName = document.getElementById('stage-name');
+        const stageNameDisplay = document.getElementById('stage-name');
         
         bank.innerHTML = '';
         nextBtn.style.display = 'none';
-        stageName.innerText = stages[currentStage].name;
+        stageNameDisplay.innerText = stages[currentStageIndex].name;
 
-        // Clear zones
-        document.querySelectorAll('.zone').forEach(z => {
-            const header = z.querySelector('.zone-header');
-            z.innerHTML = '';
-            z.appendChild(header);
+        // Reset the three zones
+        const zones = ['chief', 'invigilator', 'both'];
+        zones.forEach(zId => {
+            const zElem = document.getElementById(zId);
+            const header = zElem.querySelector('.zone-header');
+            zElem.innerHTML = '';
+            zElem.appendChild(header);
+            zElem.style.borderColor = '#cbd5e0';
         });
 
-        // Add chips
-        stages[currentStage].items.forEach(item => {
+        // Add current stage chips
+        stages[currentStageIndex].items.forEach(item => {
             const chip = document.createElement('div');
             chip.className = 'duty-chip';
             chip.draggable = true;
@@ -243,9 +279,11 @@
             bank.appendChild(chip);
         });
 
-        // Update indicators
-        document.querySelectorAll('.step').forEach((s, idx) => {
-            s.className = 'step' + (idx < currentStage ? ' done' : (idx === currentStage ? ' active' : ''));
+        // Progress navigation
+        document.querySelectorAll('.step').forEach((step, idx) => {
+            if (idx < currentStageIndex) step.className = 'step done';
+            else if (idx === currentStageIndex) step.className = 'step active';
+            else step.className = 'step';
         });
     }
 
@@ -253,26 +291,29 @@
 
     function drop(ev) {
         ev.preventDefault();
-        const id = ev.dataTransfer.getData("text");
-        const chip = document.getElementById(id);
-        let target = ev.target;
-        if (!target.classList.contains('zone')) target = target.closest('.zone');
+        const chipId = ev.dataTransfer.getData("text");
+        const chipElem = document.getElementById(chipId);
+        let targetZone = ev.target;
+        
+        if (!targetZone.classList.contains('zone')) {
+            targetZone = targetZone.closest('.zone');
+        }
 
-        if (target && target.id === chip.dataset.role) {
-            target.appendChild(chip);
-            chip.classList.add('correct');
-            chip.draggable = false;
-            checkCompletion();
-        } else if (target && target.classList.contains('zone')) {
-            // Shake effect or feedback could go here
-            alert("Incorrect placement. Consider the responsibilities of this role.");
+        if (targetZone && targetZone.id === chipElem.dataset.role) {
+            targetZone.appendChild(chipElem);
+            chipElem.classList.add('correct');
+            chipElem.draggable = false;
+            checkStageComplete();
+        } else if (targetZone && targetZone.id !== 'bank') {
+            targetZone.style.borderColor = 'var(--error-red)';
+            setTimeout(() => { targetZone.style.borderColor = '#cbd5e0'; }, 600);
         }
     }
 
-    function checkCompletion() {
+    function checkStageComplete() {
         const bank = document.getElementById('bank');
         if (bank.children.length === 0) {
-            if (currentStage < stages.length - 1) {
+            if (currentStageIndex < stages.length - 1) {
                 document.getElementById('nextBtn').style.display = 'inline-block';
             } else {
                 document.getElementById('final-msg').style.display = 'block';
@@ -282,11 +323,11 @@
     }
 
     function nextStage() {
-        currentStage++;
-        initStage();
+        currentStageIndex++;
+        loadStage();
     }
 
-    initStage();
+    loadStage();
 </script>
 
 </body>
