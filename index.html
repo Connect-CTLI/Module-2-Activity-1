@@ -3,31 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Exam Day: Roles in Action</title>
+    <title>Interactive Exam Timeline</title>
     <style>
         :root {
             --primary: #1a1f5e;
             --secondary: #185fa5;
-            --chief-color: #6c5ce7;
-            --invig-color: #00b894;
-            --both-color: #fdcb6e;
-            --bg: #f0f2f5;
+            --chief-bg: #e0dcfc;
+            --invig-bg: #dff9f3;
+            --both-bg: #fff4e0;
+            --accent: #f39c12;
         }
 
         body {
             font-family: 'Inter', sans-serif;
-            background-color: var(--bg);
-            margin: 0;
+            background-color: #f0f2f5;
             padding: 20px;
             display: flex;
             justify-content: center;
         }
 
-        .simulation-container {
+        .main-card {
             width: 100%;
-            max-width: 800px;
+            max-width: 900px;
             background: white;
-            border-radius: 15px;
+            border-radius: 12px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
             overflow: hidden;
         }
@@ -35,178 +34,259 @@
         .header {
             background: var(--primary);
             color: white;
-            padding: 25px;
+            padding: 20px;
             text-align: center;
         }
 
-        /* Timeline Navigation */
-        .timeline-nav {
+        /* Progress Steps */
+        .step-indicator {
             display: flex;
-            background: #e9ecef;
+            justify-content: space-around;
+            background: #eee;
             padding: 10px;
-            gap: 10px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: #888;
         }
 
-        .stage-btn {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            background: white;
+        .step { flex: 1; text-align: center; padding: 5px; border-bottom: 4px solid #ccc; }
+        .step.active { color: var(--secondary); border-bottom-color: var(--secondary); }
+        .step.done { color: #2ecc71; border-bottom-color: #2ecc71; }
+
+        /* Game Layout */
+        .game-body { padding: 25px; min-height: 450px; }
+        
+        .stage-title { color: var(--primary); margin-top: 0; }
+
+        .drop-zones {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .zone {
+            min-height: 180px;
+            border: 2px dashed #bbb;
             border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            color: #666;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
             transition: 0.3s;
-            font-size: 0.9rem;
         }
 
-        .stage-btn.active {
+        .zone-header {
+            text-align: center;
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            color: #555;
+        }
+
+        .chief-zone { background: var(--chief-bg); }
+        .invig-zone { background: var(--invig-bg); }
+        .both-zone { background: var(--both-bg); }
+
+        /* Chips */
+        .chip-bank {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            min-height: 60px;
+        }
+
+        .duty-chip {
+            background: white;
+            border: 1px solid #ccc;
+            padding: 10px 14px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            cursor: grab;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            max-width: 250px;
+        }
+
+        .duty-chip.correct { border: 2px solid #27ae60; background: #ebfaef; cursor: default; }
+
+        .footer {
+            padding: 20px;
+            text-align: right;
+            border-top: 1px solid #eee;
+        }
+
+        .btn-next {
             background: var(--secondary);
             color: white;
-        }
-
-        /* Content Area */
-        .content-area {
-            padding: 30px;
-            min-height: 400px;
-        }
-
-        .duty-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 15px;
-        }
-
-        .duty-item {
-            display: flex;
-            align-items: center;
-            padding: 15px;
-            background: #fff;
-            border-radius: 10px;
-            border-left: 6px solid #ccc;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            animation: fadeIn 0.5s ease forwards;
-        }
-
-        .role-tag {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            padding: 4px 8px;
-            border-radius: 4px;
-            margin-right: 15px;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 5px;
+            cursor: pointer;
             font-weight: bold;
-            min-width: 100px;
-            text-align: center;
-        }
-
-        /* Role Specific Colors */
-        .tag-chief { background: #e0dcfc; color: var(--chief-color); border: 1px solid var(--chief-color); }
-        .tag-invig { background: #dff9f3; color: var(--invig-color); border: 1px solid var(--invig-color); }
-        .tag-both { background: #fff4e0; color: #d39e00; border: 1px solid var(--both-color); }
-
-        .line-chief { border-left-color: var(--chief-color) !important; }
-        .line-invig { border-left-color: var(--invig-color) !important; }
-        .line-both { border-left-color: var(--both-color) !important; }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .instruction {
-            font-style: italic;
-            color: #666;
-            margin-bottom: 20px;
-            font-size: 0.95rem;
+            display: none;
         }
     </style>
 </head>
 <body>
 
-<div class="simulation-container">
+<div class="main-card">
     <div class="header">
-        <h2 style="margin:0">Exam Day Timeline</h2>
-        <p style="margin:5px 0 0; opacity:0.8">Click a phase to explore responsibilities</p>
+        <h3 style="margin:0">Invigilation Roles: Timeline Challenge</h3>
     </div>
 
-    <div class="timeline-nav">
-        <button class="stage-btn active" onclick="showStage('prep', this)">1. Preparation</button>
-        <button class="stage-btn" onclick="showStage('start', this)">2. Exam Start</button>
-        <button class="stage-btn" onclick="showStage('during', this)">3. During Writing</button>
-        <button class="stage-btn" onclick="showStage('end', this)">4. Conclusion</button>
+    <div class="step-indicator">
+        <div class="step active" id="s0">1. PREP</div>
+        <div class="step" id="s1">2. START</div>
+        <div class="step" id="s2">3. DURING</div>
+        <div class="step" id="s3">4. END</div>
     </div>
 
-    <div class="content-area">
-        <p class="instruction" id="stage-desc">Duties performed at least 48 hours before the session starts.</p>
-        <div class="duty-grid" id="duty-list">
-            <!-- Content injected here -->
+    <div class="game-body">
+        <h4 id="stage-name" class="stage-title">Stage 1: Preparation</h4>
+        <p style="font-size: 0.9rem; color: #666;">Drag the duties from the bank into the correct role's zone.</p>
+        
+        <div id="bank" class="chip-bank" ondrop="drop(event)" ondragover="allowDrop(event)">
+            <!-- Chips injected here -->
         </div>
+
+        <div class="drop-zones">
+            <div class="zone chief-zone" id="chief" ondrop="drop(event)" ondragover="allowDrop(event)">
+                <div class="zone-header">Chief Invigilator</div>
+            </div>
+            <div class="zone invig-zone" id="invigilator" ondrop="drop(event)" ondragover="allowDrop(event)">
+                <div class="zone-header">Invigilator</div>
+            </div>
+            <div class="zone both-zone" id="both" ondrop="drop(event)" ondragover="allowDrop(event)">
+                <div class="zone-header">Both Roles</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <button id="nextBtn" class="btn-next" onclick="nextStage()">Next Phase →</button>
+        <div id="final-msg" style="display:none; color: #27ae60; font-weight: bold;">Activity Complete! You've mastered the Exam Day timeline.</div>
     </div>
 </div>
 
 <script>
-    const timelineData = {
-        prep: {
-            desc: "Setting the stage for a successful session.",
+    const stages = [
+        {
+            name: "Stage 1: Preparation (Pre-Exam)",
             items: [
-                { role: "Chief Invigilator", text: "Ensure the examination venue is prepared at least two days before.", type: "chief" },
-                { role: "Chief Invigilator", text: "Ensure seating plans are displayed inside and outside the room.", type: "chief" },
-                { role: "Chief Invigilator", text: "Confirm candidate-to-invigilator ratio (1:30) is maintained.", type: "chief" }
+                { id: "i1", text: "Ensure venue is prepared 2 days before.", role: "chief" },
+                { id: "i2", text: "Ensure seating plan is displayed clearly.", role: "chief" },
+                { id: "i3", text: "Confirm 1:30 invigilator ratio.", role: "chief" }
             ]
         },
-        start: {
-            desc: "The critical moments before 'Start Writing' is announced.",
+        {
+            name: "Stage 2: Exam Start (The Briefing)",
             items: [
-                { role: "Chief Invigilator", text: "Retrieve sealed session bags using the GLAM key procedure.", type: "chief" },
-                { role: "Invigilator", text: "Check candidate proof of identity and Admission Letters.", type: "invigilator" },
-                { role: "Chief Invigilator", text: "Open sealed paper bags in front of candidates and the Principal.", type: "chief" },
-                { role: "Both", text: "Wear a name tag at all times.", type: "both" }
+                { id: "i4", text: "Retrieve session bags (GLAM key).", role: "chief" },
+                { id: "i5", text: "Check IDs and Admission Letters.", role: "invigilator" },
+                { id: "i6", text: "Open paper bags in front of learners.", role: "chief" },
+                { id: "i7", text: "Wear a name tag at all times.", role: "both" }
             ]
         },
-        during: {
-            desc: "Maintaining integrity while the exam is in progress.",
+        {
+            name: "Stage 3: During Writing",
             items: [
-                { role: "Invigilator", text: "Move continuously around the venue to supervise learners.", type: "invigilator" },
-                { role: "Invigilator", text: "Escort candidates to the bathroom when necessary.", type: "invigilator" },
-                { role: "Invigilator", text: "Confiscate unauthorised devices and mark scripts as IRREGULARITY.", type: "invigilator" },
-                { role: "Invigilator", text: "Mark learners as Present or Absent on the Script Control Register.", type: "invigilator" }
+                { id: "i8", text: "Move continuously to supervise.", role: "invigilator" },
+                { id: "i9", text: "Escort learners to the bathroom.", role: "invigilator" },
+                { id: "i10", text: "Mark Script Control Register.", role: "invigilator" },
+                { id: "i11", text: "Confiscate unauthorised devices.", role: "invigilator" }
             ]
         },
-        end: {
-            desc: "Wrapping up and securing the answer scripts.",
+        {
+            name: "Stage 4: Conclusion & Security",
             items: [
-                { role: "Invigilator", text: "Count all answer books before and after use.", type: "invigilator" },
-                { role: "Invigilator", text: "Ensure no answer books remain in the venue after the session.", type: "invigilator" },
-                { role: "Both", text: "Batch and package answer scripts after each session.", type: "both" },
-                { role: "Chief Invigilator", text: "Submit irregularity reports (Annexure A) to the WCED Unit.", type: "chief" }
+                { id: "i12", text: "Submit Irregularity (Annexure A).", role: "chief" },
+                { id: "i13", text: "Count all answer books.", role: "invigilator" },
+                { id: "i14", text: "Batch and package scripts.", role: "both" },
+                { id: "i15", text: "Clear venue of all answer books.", role: "invigilator" }
             ]
         }
-    };
+    ];
 
-    function showStage(stageKey, btn) {
-        // Update Buttons
-        document.querySelectorAll('.stage-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
+    let currentStage = 0;
 
-        const container = document.getElementById('duty-list');
-        const desc = document.getElementById('stage-desc');
+    function initStage() {
+        const bank = document.getElementById('bank');
+        const nextBtn = document.getElementById('nextBtn');
+        const stageName = document.getElementById('stage-name');
         
-        container.innerHTML = '';
-        desc.innerText = timelineData[stageKey].desc;
+        bank.innerHTML = '';
+        nextBtn.style.display = 'none';
+        stageName.innerText = stages[currentStage].name;
 
-        timelineData[stageKey].items.forEach(item => {
-            const div = document.createElement('div');
-            div.className = `duty-item line-${item.type}`;
-            div.innerHTML = `
-                <span class="role-tag tag-${item.type}">${item.role}</span>
-                <span>${item.text}</span>
-            `;
-            container.appendChild(div);
+        // Clear zones
+        document.querySelectorAll('.zone').forEach(z => {
+            const header = z.querySelector('.zone-header');
+            z.innerHTML = '';
+            z.appendChild(header);
+        });
+
+        // Add chips
+        stages[currentStage].items.forEach(item => {
+            const chip = document.createElement('div');
+            chip.className = 'duty-chip';
+            chip.draggable = true;
+            chip.id = item.id;
+            chip.innerText = item.text;
+            chip.dataset.role = item.role;
+            chip.ondragstart = (ev) => ev.dataTransfer.setData("text", ev.target.id);
+            bank.appendChild(chip);
+        });
+
+        // Update indicators
+        document.querySelectorAll('.step').forEach((s, idx) => {
+            s.className = 'step' + (idx < currentStage ? ' done' : (idx === currentStage ? ' active' : ''));
         });
     }
 
-    // Load first stage
-    showStage('prep', document.querySelector('.stage-btn'));
+    function allowDrop(ev) { ev.preventDefault(); }
+
+    function drop(ev) {
+        ev.preventDefault();
+        const id = ev.dataTransfer.getData("text");
+        const chip = document.getElementById(id);
+        let target = ev.target;
+        if (!target.classList.contains('zone')) target = target.closest('.zone');
+
+        if (target && target.id === chip.dataset.role) {
+            target.appendChild(chip);
+            chip.classList.add('correct');
+            chip.draggable = false;
+            checkCompletion();
+        } else if (target && target.classList.contains('zone')) {
+            // Shake effect or feedback could go here
+            alert("Incorrect placement. Consider the responsibilities of this role.");
+        }
+    }
+
+    function checkCompletion() {
+        const bank = document.getElementById('bank');
+        if (bank.children.length === 0) {
+            if (currentStage < stages.length - 1) {
+                document.getElementById('nextBtn').style.display = 'inline-block';
+            } else {
+                document.getElementById('final-msg').style.display = 'block';
+                document.getElementById('s3').className = 'step done';
+            }
+        }
+    }
+
+    function nextStage() {
+        currentStage++;
+        initStage();
+    }
+
+    initStage();
 </script>
 
 </body>
