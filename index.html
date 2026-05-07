@@ -3,261 +3,210 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invigilation Roles & Responsibilities</title>
+    <title>Invigilation Role Challenge</title>
     <style>
         :root {
             --primary-navy: #1a1f5e;
             --secondary-blue: #185fa5;
             --accent-green: #3a6b22;
             --error-red: #a32d2d;
-            --bg-light: #f8f9fa;
-            --text-dark: #333;
+            --bg-light: #f4f7f9;
             --white: #ffffff;
         }
 
         body {
-            font-family: 'Inter', -apple-system, sans-serif;
-            background-color: #e9ecef;
-            padding: 20px;
-            color: var(--text-dark);
-            line-height: 1.5;
-        }
-
-        .module-container {
-            max-width: 1100px;
-            margin: 0 auto;
-            background: var(--white);
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            overflow: hidden;
-        }
-
-        /* Header & Instructions */
-        .header-bar {
-            background: var(--primary-navy);
-            color: var(--white);
-            padding: 20px;
+            font-family: 'Inter', sans-serif;
+            background-color: #d1d8e0;
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
-        }
-
-        .instruction-box {
+            min-height: 100vh;
+            margin: 0;
             padding: 20px;
-            background: #f1f4f9;
-            border-left: 5px solid var(--secondary-blue);
-            margin: 15px;
-            font-size: 0.95rem;
         }
 
-        /* Drag and Drop Area */
-        .game-area {
+        .challenge-container {
+            width: 100%;
+            max-width: 600px;
+            background: var(--white);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            padding: 30px;
+            text-align: center;
+        }
+
+        .progress-container {
+            width: 100%;
+            background: #eee;
+            border-radius: 10px;
+            height: 8px;
+            margin-bottom: 20px;
+        }
+
+        #progress-bar {
+            width: 0%;
+            height: 100%;
+            background: var(--secondary-blue);
+            border-radius: 10px;
+            transition: width 0.4s ease;
+        }
+
+        .card-counter {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* The Active Question Card */
+        .duty-display {
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-light);
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: var(--primary-navy);
+            transition: transform 0.3s ease;
+        }
+
+        /* Interaction Buttons */
+        .button-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 20px;
-            padding: 20px;
+            gap: 12px;
         }
 
-        .chip-bank {
-            background: #eee;
+        .role-btn {
             padding: 15px;
-            border-radius: 8px;
-            min-height: 100px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            border: 2px dashed #ccc;
-        }
-
-        .columns-container {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-        }
-
-        .drop-column {
-            background: var(--bg-light);
-            border: 2px solid #dee2e6;
-            border-radius: 10px;
-            min-height: 400px;
-            display: flex;
-            flex-direction: column;
-            padding: 10px;
-            transition: all 0.3s ease;
-        }
-
-        .column-header {
-            text-align: center;
-            font-weight: bold;
-            padding: 10px;
-            margin-bottom: 10px;
-            background: var(--secondary-blue);
-            color: white;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-        }
-
-        /* Duty Cards */
-        .duty-card {
+            border: 2px solid var(--secondary-blue);
             background: var(--white);
-            border: 1px solid #ced4da;
-            padding: 12px;
-            border-radius: 6px;
-            cursor: grab;
-            font-size: 0.85rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            user-select: none;
-            transition: transform 0.2s;
-        }
-
-        .duty-card:active { cursor: grabbing; }
-
-        /* Functional States */
-        .correct { border: 2px solid var(--accent-green) !important; background: #eef7ea !important; }
-        .wrong { border: 2px solid var(--error-red) !important; background: #fdf2f2 !important; }
-
-        .controls {
-            padding: 20px;
-            text-align: center;
-            border-top: 1px solid #eee;
-        }
-
-        .btn {
-            padding: 10px 25px;
-            border-radius: 6px;
-            border: none;
+            color: var(--secondary-blue);
+            border-radius: 8px;
             font-weight: bold;
             cursor: pointer;
-            margin: 0 5px;
+            transition: all 0.2s ease;
+            font-size: 1rem;
         }
 
-        .btn-check { background: var(--primary-navy); color: white; }
-        .btn-reset { background: #6c757d; color: white; }
-
-        @media (max-width: 768px) {
-            .columns-container { grid-template-columns: 1fr; }
+        .role-btn:hover {
+            background: var(--secondary-blue);
+            color: var(--white);
         }
+
+        /* Feedback Styles */
+        .correct-anim { animation: pulseGreen 0.6s ease; }
+        .wrong-anim { animation: shakeRed 0.5s ease; }
+
+        @keyframes pulseGreen {
+            0% { background: var(--white); }
+            50% { background: #d4edda; border-color: var(--accent-green); }
+            100% { background: var(--white); }
+        }
+
+        @keyframes shakeRed {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); background: #f8d7da; }
+            75% { transform: translateX(10px); }
+        }
+
+        .summary-screen { display: none; }
+        .summary-screen h2 { color: var(--primary-navy); }
     </style>
 </head>
 <body>
 
-<div class="module-container">
-    <div class="header-bar">
-        <span><strong>CTLI:</strong> Examination Administration</span>
-        <span>Module 4: Invigilation Protocols</span>
+<div class="challenge-container" id="game-box">
+    <div class="card-counter">Duty <span id="current-num">1</span> of 15</div>
+    <div class="progress-container">
+        <div id="progress-bar"></div>
     </div>
 
-    <div class="instruction-box">
-        <strong>Instruction:</strong> Read each statement carefully. Consider who is primarily responsible. When you have your answer, Drag each duty card to the correct column: Chief Invigilator, Invigilator, or Both.
+    <div id="duty-card" class="duty-display">
+        <!-- Text injected here -->
     </div>
 
-    <div class="game-area">
-        <div id="bank" class="chip-bank" ondrop="drop(event)" ondragover="allowDrop(event)">
-            <!-- Cards will be injected here -->
-        </div>
-
-        <div class="columns-container">
-            <div class="drop-column" id="chief" ondrop="drop(event)" ondragover="allowDrop(event)">
-                <div class="column-header">Chief Invigilator</div>
-            </div>
-            <div class="drop-column" id="invigilator" ondrop="drop(event)" ondragover="allowDrop(event)">
-                <div class="column-header">Invigilator</div>
-            </div>
-            <div class="drop-column" id="both" ondrop="drop(event)" ondragover="allowDrop(event)">
-                <div class="column-header">Both (All Staff)</div>
-            </div>
-        </div>
+    <div class="button-grid" id="controls">
+        <button class="role-btn" onclick="checkAnswer('chief')">Chief Invigilator</button>
+        <button class="role-btn" onclick="checkAnswer('invigilator')">Invigilator</button>
+        <button class="role-btn" onclick="checkAnswer('both')">Both Roles</button>
     </div>
 
-    <div class="controls">
-        <button class="btn btn-check" onclick="checkAnswers()">Check My Answers</button>
-        <button class="btn btn-reset" onclick="resetGame()">Reset Activity</button>
+    <div id="summary" class="summary-screen">
+        <h2>Activity Complete!</h2>
+        <p>You have successfully assigned all invigilation duties.</p>
+        <button class="role-btn" style="width:100%" onclick="location.reload()">Restart Activity</button>
     </div>
 </div>
 
 <script>
-    const data = [
-        { id: 1, text: "Ensure the examination venue is prepared at least two days before the examination.", category: "chief" },
-        { id: 2, text: "Wear a name tag at all times.", category: "both" },
-        { id: 3, text: "Check each candidate's proof of identity (ID or passport) and official Admission Letter.", category: "invigilator" },
-        { id: 4, text: "Confirm the correct candidate-to-invigilator ratio of 1:30 is maintained.", category: "chief" },
-        { id: 5, text: "Move continuously around the venue to supervise candidates while they write.", category: "invigilator" },
-        { id: 6, text: "Escort candidates to the bathroom when necessary.", category: "invigilator" },
-        { id: 7, text: "Open sealed question paper bags in front of the candidates and the principal.", category: "chief" },
-        { id: 8, text: "Count all answer books before and after use.", category: "invigilator" },
-        { id: 9, text: "Mark candidates as Present or Absent on the Script Control Register.", category: "invigilator" },
-        { id: 10, text: "Confiscate unauthorised devices or materials and mark the answer script as IRREGULARITY.", category: "invigilator" },
-        { id: 11, text: "Submit the irregularity report form (Annexure A) to the WCED Irregularity Unit.", category: "chief" },
-        { id: 12, text: "Ensure no answer books — used, unused or spoilt — remain in the venue after the session.", category: "invigilator" },
-        { id: 13, text: "Batch and package answer scripts after each session.", category: "both" },
-        { id: 14, text: "Ensure the seating plan is displayed inside and outside the examination room.", category: "chief" },
-        { id: 15, text: "Retrieve the sealed session bag in accordance with the required GLAM key procedure.", category: "chief" }
+    const duties = [
+        { text: "Ensure the examination venue is prepared at least two days before the examination.", ans: "chief" },
+        { text: "Wear a name tag at all times.", ans: "both" },
+        { text: "Check each candidate's proof of identity (ID or passport) and official Admission Letter.", ans: "invigilator" },
+        { text: "Confirm the correct candidate-to-invigilator ratio of 1:30 is maintained.", ans: "chief" },
+        { text: "Move continuously around the venue to supervise candidates while they write.", ans: "invigilator" },
+        { text: "Escort candidates to the bathroom when necessary.", ans: "invigilator" },
+        { text: "Open sealed question paper bags in front of the candidates and the principal.", ans: "chief" },
+        { text: "Count all answer books before and after use.", ans: "invigilator" },
+        { text: "Mark candidates as Present or Absent on the Script Control Register.", ans: "invigilator" },
+        { text: "Confiscate unauthorised devices or materials and mark the answer script as IRREGULARITY.", ans: "invigilator" },
+        { text: "Submit the irregularity report form (Annexure A) to the WCED Irregularity Unit.", ans: "chief" },
+        { text: "Ensure no answer books — used, unused or spoilt — remain in the venue after the session.", ans: "invigilator" },
+        { text: "Batch and package answer scripts after each session.", ans: "both" },
+        { text: "Ensure the seating plan is displayed inside and outside the examination room.", ans: "chief" },
+        { text: "Retrieve the sealed session bag in accordance with the required GLAM key procedure.", ans: "chief" }
     ];
 
-    function init() {
-        const bank = document.getElementById('bank');
-        bank.innerHTML = '';
-        // Shuffle cards
-        const shuffled = [...data].sort(() => Math.random() - 0.5);
-        
-        shuffled.forEach(item => {
-            const card = document.createElement('div');
-            card.className = 'duty-card';
-            card.draggable = true;
-            card.id = 'card-' + item.id;
-            card.innerText = item.text;
-            card.dataset.category = item.category;
-            card.ondragstart = drag;
-            bank.appendChild(card);
-        });
-    }
+    let currentIndex = 0;
 
-    function allowDrop(ev) { ev.preventDefault(); }
-
-    function drag(ev) { ev.dataTransfer.setData("text", ev.target.id); }
-
-    function drop(ev) {
-        ev.preventDefault();
-        const dataId = ev.dataTransfer.getData("text");
-        const card = document.getElementById(dataId);
-        let target = ev.target;
-        
-        // Ensure we drop into the column, not the header or another card
-        if (!target.classList.contains('drop-column') && !target.classList.contains('chip-bank')) {
-            target = target.closest('.drop-column') || target.closest('.chip-bank');
-        }
-        
-        if (target) {
-            target.appendChild(card);
-            card.classList.remove('correct', 'wrong');
+    function loadCard() {
+        if (currentIndex < duties.length) {
+            document.getElementById('duty-card').innerText = duties[currentIndex].text;
+            document.getElementById('current-num').innerText = currentIndex + 1;
+            updateProgress();
+        } else {
+            showSummary();
         }
     }
 
-    function checkAnswers() {
-        const cards = document.querySelectorAll('.duty-card');
-        cards.forEach(card => {
-            const parentId = card.parentElement.id;
-            if (parentId === 'bank') return;
-
-            if (card.dataset.category === parentId) {
-                card.classList.add('correct');
-                card.classList.remove('wrong');
-            } else {
-                card.classList.add('wrong');
-                setTimeout(() => {
-                    document.getElementById('bank').appendChild(card);
-                    card.classList.remove('wrong');
-                }, 1500);
-            }
-        });
+    function checkAnswer(choice) {
+        const display = document.getElementById('duty-card');
+        if (choice === duties[currentIndex].ans) {
+            display.classList.add('correct-anim');
+            setTimeout(() => {
+                display.classList.remove('correct-anim');
+                currentIndex++;
+                loadCard();
+            }, 600);
+        } else {
+            display.classList.add('wrong-anim');
+            setTimeout(() => {
+                display.classList.remove('wrong-anim');
+            }, 500);
+        }
     }
 
-    function resetGame() {
-        location.reload();
+    function updateProgress() {
+        const percent = (currentIndex / duties.length) * 100;
+        document.getElementById('progress-bar').style.width = percent + '%';
     }
 
-    init();
+    function showSummary() {
+        document.getElementById('duty-card').style.display = 'none';
+        document.getElementById('controls').style.display = 'none';
+        document.getElementById('summary').style.display = 'block';
+        document.getElementById('progress-bar').style.width = '100%';
+    }
+
+    // Initialise
+    loadCard();
 </script>
 
 </body>
